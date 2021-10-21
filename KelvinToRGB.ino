@@ -23,9 +23,9 @@ int nighttime[3] = {255, 53, 0};
 //*************************DESIRED_WAKING_TIMES*************************//
 long wakeUpTime[2] = {7, 30}; // HHMM
 
-long timenow[3] = {13, 55, 10}; // HHMMSS, current time
-int dayOfTheWeek = 7; // 1 = Monday, 7 = Sunday
-int date[3] = {28, 6, 2020}; // DDMMYYYY, uses month approximation to 30 days
+long timenow[3] = {10, 53, 20}; // HHMMSS, current time
+int dayOfTheWeek = 1; // 1 = Monday, 7 = Sunday
+int date[3] = {23, 11, 2020}; // DDMMYYYY, uses month approximation to 30 days
 
 float timeSpeed = 1; // debugging tool
 
@@ -66,8 +66,13 @@ int daylightSavingOn = 88; // daylight savings day numbers
 int daylightSavingOff = 298;
 
 //*************************SWITCH_TO_NEXT_COLOUR*************************//
-void colourSwitch (int nextClr[3], float period, int reports = 100, int fadeDelay = 10) {
+void colourSwitch (int nextClr[3], float period, int reports = 100, int fadeDelay = 33) {
+  // fadeDelay was 10, too fast
+  // then 100, too slow, took 1.8 hrs
+  // now 55, was messing with morning time instead of wake time
+  // so maybe 33
   Serial.println("Adjusting colour...");
+  //unsigned long startMillis = currentMillis;
   if (period > 3600) {  // duration max is an hour
     period = 3600;
   }
@@ -189,22 +194,22 @@ void setup() {
   // set starting colour to the proper one
   if ((offsetMillis > nightTime) || (offsetMillis < wakeTime)) {
     currentTime = 0;
-    colourSwitch(nighttime, 1 * timeSpeed, 6);
+    colourSwitch(nighttime, 1 * timeSpeed, 6, 10);
     //correctTrigger(wakeTime);
   }
   else if (offsetMillis < dawnTime) {
     currentTime = 1;
-    colourSwitch(sunset, 1 * timeSpeed, 6);
+    colourSwitch(sunset, 1 * timeSpeed, 6, 10);
     //correctTrigger(dawnTime);
   }
   else if (offsetMillis < duskTime) {
     currentTime = 2;
-    colourSwitch(daytime, 1 * timeSpeed, 6);
+    colourSwitch(daytime, 1 * timeSpeed, 6, 10);
     //correctTrigger(duskTime);
   }
   else {
     currentTime = 3;
-    colourSwitch(sunset, 1 * timeSpeed, 6);
+    colourSwitch(sunset, 1 * timeSpeed, 6, 10);
     //correctTrigger(nightTime);
   }
 
