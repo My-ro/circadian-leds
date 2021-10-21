@@ -21,11 +21,11 @@ int sunset[3] = {245, 60, 5};
 int nighttime[3] = {255, 53, 0};
 
 //*************************DESIRED_WAKING_TIMES*************************//
-long wakeUpTime[2] = {7, 30}; // HHMM
+long wakeUpTime[2] = {6, 30}; // HHMM
 
-long timenow[3] = {10, 53, 20}; // HHMMSS, current time
-int dayOfTheWeek = 1; // 1 = Monday, 7 = Sunday
-int date[3] = {23, 11, 2020}; // DDMMYYYY, uses month approximation to 30 days
+long timenow[3] = {23, 19, 0}; // HHMMSS, current time
+int dayOfTheWeek = 3; // 1 = Monday, 7 = Sunday
+int date[3] = {13, 10, 2021}; // DDMMYYYY, uses month approximation to 30 days
 
 float timeSpeed = 1; // debugging tool
 
