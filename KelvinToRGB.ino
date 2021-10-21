@@ -21,11 +21,11 @@ int sunset[3] = {245, 60, 5};
 int nighttime[3] = {255, 53, 0};
 
 //*************************DESIRED_WAKING_TIMES*************************//
-long wakeUpTime[2] = {06, 30}; // HHMM
+long wakeUpTime[2] = {7, 30}; // HHMM
 
-long timenow[3] = {23, 56, 20}; // HHMMSS, current time
-int dayOfTheWeek = 4; // 1 = Monday, 7 = Sunday
-int date[3] = {28, 5, 2020}; // DDMMYYYY, uses month approximation to 30 days
+long timenow[3] = {13, 55, 10}; // HHMMSS, current time
+int dayOfTheWeek = 7; // 1 = Monday, 7 = Sunday
+int date[3] = {28, 6, 2020}; // DDMMYYYY, uses month approximation to 30 days
 
 float timeSpeed = 1; // debugging tool
 
@@ -44,7 +44,7 @@ unsigned long wakeTime = 60000 * wakeUpTime[1] + 3600000 * wakeUpTime[0];
 unsigned long dawnTime;
 unsigned long duskTime;
 unsigned long nightTime;
-unsigned long triggerTime;
+//unsigned long triggerTime;
 int currentTime;
 bool dawn = false;
 bool dusk = false;
@@ -190,22 +190,22 @@ void setup() {
   if ((offsetMillis > nightTime) || (offsetMillis < wakeTime)) {
     currentTime = 0;
     colourSwitch(nighttime, 1 * timeSpeed, 6);
-    correctTrigger(wakeTime);
+    //correctTrigger(wakeTime);
   }
   else if (offsetMillis < dawnTime) {
     currentTime = 1;
     colourSwitch(sunset, 1 * timeSpeed, 6);
-    correctTrigger(dawnTime);
+    //correctTrigger(dawnTime);
   }
   else if (offsetMillis < duskTime) {
     currentTime = 2;
     colourSwitch(daytime, 1 * timeSpeed, 6);
-    correctTrigger(duskTime);
+    //correctTrigger(duskTime);
   }
   else {
     currentTime = 3;
     colourSwitch(sunset, 1 * timeSpeed, 6);
-    correctTrigger(nightTime);
+    //correctTrigger(nightTime);
   }
 
   Serial.println("Setup complete.");
@@ -250,30 +250,27 @@ void loop() {
     printTime(nightTime);
     Serial.print(currentTime + 1);
     Serial.print(", ");
-    printTime(triggerTime);
+    //printTime(triggerTime);
     printTime(currentMillis, false);
     Serial.println();
   }
 
   switch (currentTime) {
     case 0:
-      if (((currentMillis > triggerTime) && (currentMillis < dawnTime)) || !dawn) {
+      if (((currentMillis + 3600000 > wakeTime) || !dawn) && (currentMillis < dawnTime)) {
         if (dawn) {
           if (!weekend) {
             brightLock = true;
             Serial.println("Brightness locked.");
           }
           colourSwitch(sunset, (wakeTime - currentMillis) / 1000);
-          while (currentMillis < triggerTime) {
-            ; // prevent the code looping through a whole day in half an hour
-          }
-          correctTrigger(dawnTime);
+          //correctTrigger(dawnTime);
         }
         currentTime++;
       }
       break;
     case 1:
-      if ((currentMillis > triggerTime) && (currentMillis < duskTime)) {
+      if ((currentMillis + 3600000 > dawnTime) && (currentMillis < duskTime)) {
         if (!dawn) {
           if (!weekend) {
             brightLock = true;
@@ -281,32 +278,23 @@ void loop() {
           }
         }
         colourSwitch(daytime, (dawnTime - currentMillis) / 1000);
-        while (currentMillis < triggerTime) {
-          ; // prevent the code looping through a whole day in half an hour
-        }
-        correctTrigger(duskTime);
+        //correctTrigger(duskTime);
         currentTime++;
       }
       break;
     case 2:
-      if (((currentMillis > triggerTime) && (currentMillis < nightTime)) || !dusk) {
+      if (((currentMillis + 3600000 > duskTime) && (currentMillis < nightTime)) || !dusk) {
         if (dusk) {
           colourSwitch(sunset, (duskTime - currentMillis) / 1000);
-          while (currentMillis < triggerTime) {
-            ; // prevent the code looping through a whole day in half an hour
-          }
-          correctTrigger(nightTime);
+          //correctTrigger(nightTime);
         }
         currentTime++;
       }
       break;
     case 3:
-      if (((currentMillis > triggerTime) && (currentMillis < 86400000)) || ((currentMillis > triggerTime) && (currentMillis < wakeTime))) {
+      if ((currentMillis + 3600000 > nightTime) && ((nightTime > wakeTime) || (currentMillis < wakeTime))) {
         colourSwitch(nighttime, (nightTime - currentMillis) / 1000);
-        while (currentMillis < triggerTime) {
-          ; // prevent the code looping through a whole day in half an hour
-        }
-        correctTrigger(wakeTime);
+        //correctTrigger(wakeTime);
         currentTime = 0;
       }
       break;
@@ -450,9 +438,9 @@ void updateClr() {
 //*************************SET_NEXT_TRIGGER*************************//
 void correctTrigger(unsigned long nextTime) { // used to allow fading an hour before transition time without messing with times
   if (nextTime < 3600000) {
-    triggerTime = 82800000 + nextTime;
+    //triggerTime = 82800000 + nextTime;
   }
   else {
-    triggerTime = nextTime - 3600000;
+    //triggerTime = nextTime - 3600000;
   }
 }
